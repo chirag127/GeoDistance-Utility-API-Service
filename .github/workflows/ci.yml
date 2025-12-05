@@ -1,0 +1,62 @@
+name: CI
+
+# Controls when the workflow will run
+# For now, it runs on push to the main branch and for pull requests to the main branch
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  # This job builds and tests the application
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        python-version:
+          - "3.10"
+          - "3.11"
+          - "3.12"
+          - "3.13"
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: 'uv'
+
+      - name: Install dependencies with uv
+        run: | # Use uv for dependency management
+          python -m uv install --frozen --system
+          python -m uv pip install --frozen --system pytest
+
+      - name: Run Linters and Formatters with Ruff
+        run: | # Use Ruff for linting and formatting
+          python -m uv pip install ruff
+          python -m ruff check .
+          python -m ruff format --check .
+
+      - name: Run Tests with Pytest
+        run: | # Use Pytest for testing
+          python -m pytest tests/unit
+
+      - name: Run Integration Tests (if applicable)
+        # This step assumes integration tests are in a separate directory or can be triggered by a flag
+        run: |
+          echo "Skipping integration tests for now. Add specific commands if needed."
+          # Example: python -m pytest tests/integration
+
+      - name: Archive test results (optional)
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results-${{ matrix.python-version }}
+          path: | # Adjust path to where your test reports are generated
+            **/test_*.xml
+          if: always() # Upload even if previous steps failed
