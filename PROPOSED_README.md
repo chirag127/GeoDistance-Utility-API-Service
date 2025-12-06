@@ -1,201 +1,158 @@
-# GeoDistance-Utility-API-Service
+# PinCodeFlow-GeoDistance-Calculation-Python-API
 
-[![Build Status](https://img.shields.io/github/actions/workflow/status/chirag127/GeoDistance-Utility-API-Service/ci.yml?style=flat-square)](https://github.com/chirag127/GeoDistance-Utility-API-Service/actions)
-[![Code Coverage](https://img.shields.io/codecov/c/github/chirag127/GeoDistance-Utility-API-Service?style=flat-square)](https://app.codecov.io/github/chirag127/GeoDistance-Utility-API-Service)
-[![Tech Stack](https://img.shields.io/badge/Python-3.10+-blue?style=flat-square)](https://www.python.org/)
-[![Lint/Format](https://img.shields.io/badge/Ruff-Enabled-orange?style=flat-square)](https://github.com/astral-sh/ruff)
-[![License](https://img.shields.io/github/license/chirag127/GeoDistance-Utility-API-Service?style=flat-square)](LICENSE)
-[![GitHub Stars](https://img.shields.io/github/stars/chirag127/GeoDistance-Utility-API-Service?style=flat-square)](https://github.com/chirag127/GeoDistance-Utility-API-Service)
+High-performance, domain-driven Python REST API for rapid, accurate distance calculation and route optimization between Indian Pincode locations. Engineered for low-latency and enterprise scalability.
 
-## Revolutionize Your Location-Based Services
+[![CI/CD Status](https://img.shields.io/github/actions/workflow/status/chirag127/PinCodeFlow-GeoDistance-Calculation-Python-API/ci.yml?branch=main&style=flat-square&label=CI%2FCD)](https://github.com/chirag127/PinCodeFlow-GeoDistance-Calculation-Python-API/actions/workflows/ci.yml)
+[![Code Coverage](https://img.shields.io/codecov/c/github/chirag127/PinCodeFlow-GeoDistance-Calculation-Python-API?token=<CODECOV_TOKEN>&style=flat-square)](https://app.codecov.io/gh/chirag127/PinCodeFlow-GeoDistance-Calculation-Python-API)
+[![Python Version](https://img.shields.io/badge/Python-3.11%2B-blue?style=flat-square&logo=python)](https://www.python.org/)
+[![API Framework](https://img.shields.io/badge/API-FastAPI-05998a?style=flat-square&logo=fastapi)](https://fastapi.tiangolo.com/)
+[![Code Style](https://img.shields.io/badge/Linter-Ruff-000000?style=flat-square&logo=ruff)](https://docs.astral.sh/ruff/)
+[![License](https://img.shields.io/badge/License-CC%20BY--NC%204.0-lightgrey.svg?style=flat-square)](LICENSE)
 
-A robust, high-performance microservice providing precise geospatial distance calculation APIs. Optimized for efficiency and accuracy, supporting Haversine and Vincenty formulas for mission-critical logistics and location intelligence.
+---
 
---- 
+## Star this Repository!
+[![GitHub Stars](https://img.shields.io/github/stars/chirag127/PinCodeFlow-GeoDistance-Calculation-Python-API.svg?style=social&label=Star)](https://github.com/chirag127/PinCodeFlow-GeoDistance-Calculation-Python-API/stargazers)
 
-## Table of Contents
+## 1. Overview
 
-*   [Overview](#overview)
-*   [Key Features](#key-features)
-*   [Architecture](#architecture)
-*   [Getting Started](#getting-started)
-*   [Usage](#usage)
-*   [Development](#development)
-*   [Contributing](#contributing)
-*   [License](#license)
-*   [AI Agent Directives](#ai-agent-directives) 
+PinCodeFlow provides a dedicated microservice layer for geospatial querying, focusing on the highly specific challenge of rapid distance computation between Indian Postal Codes (Pincodes). By leveraging optimized geospatial indexing and adhering to the **Hexagonal Architecture (Ports & Adapters)**, this service guarantees high availability, sub-millisecond query times, and exceptional maintainability.
 
---- 
+### 1.1. Core Features
 
-## Overview
+*   **Low Latency API:** Built on FastAPI and Uvicorn for asynchronous, high-throughput request handling.
+*   **Hexagonal Design:** Strict separation between API/Infrastructure (Adapters) and Core Business Logic (Domain).
+*   **Optimized Distance Kernel:** Utilizes efficient Haversine or Vincenty formulas optimized for Pincode coordinates.
+*   **Scalable Caching:** Integration points for Redis/Memcached to cache frequent Pincode lookups and distance results.
+*   **Containerized Deployment:** Production-ready Dockerfile for seamless integration into Kubernetes or ECS environments.
 
-This microservice is designed to offer developers a fast and reliable way to compute distances between geographical points. It implements industry-standard formulas, ensuring that applications requiring accurate location data can rely on its API for core calculations.
+## 2. System Architecture (Hexagonal Model)
 
-## Key Features
-
-*   **Haversine Formula:** Accurate distance calculation on a sphere, ideal for most terrestrial applications.
-*   **Vincenty's Formulae:** Highly accurate geodesic distance calculation on an ellipsoid, suitable for applications demanding extreme precision.
-*   **RESTful API:** Simple and intuitive interface for easy integration.
-*   **Microservice Architecture:** Designed for scalability and independent deployment.
-*   **Performance Optimized:** Built with efficiency in mind for high-throughput scenarios.
-
-## Architecture
+This project implements the Hexagonal Architecture pattern to ensure the Domain Core remains independent of infrastructure details (e.g., database type, web framework).
 
 mermaid
 graph TD
-    A[API Gateway/Client] --> B(GeoDistance Service);
-    B --> C{Distance Calculation Logic};
-    C -- Haversine --> D[Haversine Implementation];
-    C -- Vincenty --> E[Vincenty Implementation];
-    B --> F(Response Formatting);
-    F --> A;
+    A[Client/Gateway] --> B(FastAPI Controller: Pincode Endpoints);
+    B --> C{Application Service: Distance Usecase};
+    C --> D[Domain Core: Pincode Entity & Distance Logic];
+    C --> E[Port: GeoSpatial Repository Interface];
+    E --> F[Adapter: Pincode Database/Index Storage];
+    B --> G[Adapter: Caching Layer];
+
+    subgraph Hexagonal Architecture
+        C
+        D
+        E
+    end
+
+    style D fill:#f9f,stroke:#333,stroke-width:2px,color:#333
+    style C fill:#ccf,stroke:#333,stroke-width:2px,color:#333
+    style E fill:#aaf,stroke:#333,stroke-width:2px,color:#333
 
 
-**Design Principles:**
+## 3. Prerequisites & Setup
 
-*   **SOLID:** Each component adheres to the Single Responsibility, Open/Closed, Liskov Substitution, Interface Segregation, and Dependency Inversion principles.
-*   **DRY (Don't Repeat Yourself):** Core logic is abstracted to avoid duplication.
-*   **YAGNI (You Ain't Gonna Need It):** Features are implemented only as required, maintaining a lean and focused codebase.
+This project requires Python 3.11+ and uses `uv` as the ultra-fast package manager and dependency resolver.
 
-## Getting Started
-
-### Prerequisites
-
-*   **Python 3.10+:** Ensure you have Python installed.
-*   **uv:** Python's modern package and environment manager.
-
-### Installation
+### 3.1. Local Installation
 
 1.  **Clone the repository:**
     bash
-    git clone https://github.com/chirag127/GeoDistance-Utility-API-Service.git
-    cd GeoDistance-Utility-API-Service
+    git clone https://github.com/chirag127/PinCodeFlow-GeoDistance-Calculation-Python-API.git
+    cd PinCodeFlow-GeoDistance-Calculation-Python-API
     
 
-2.  **Install dependencies using uv:**
+2.  **Install dependencies using `uv`:**
     bash
+    # uv replaces pip and virtualenv for speed
     uv venv
     source .venv/bin/activate
-    uv pip install -r requirements.txt
+    uv sync
     
 
-### Running the Service
+3.  **Run the development server:**
+    bash
+    # Uses Uvicorn with automatic reloading
+    uv run dev
+    # API available at: http://127.0.0.1:8000/docs
+    
 
-bash
-python src/main.py
+## 4. API Endpoints
 
+| Method | Endpoint | Description | Status Code | Example Request Body |
+| :--- | :--- | :--- | :--- | :--- |
+| `GET` | `/health` | Health check and status ping. | `200 OK` | N/A |
+| `POST` | `/api/v1/distance` | Calculates the distance (km) between two Pincodes. | `200 OK` | `{"pincode_a": "110001", "pincode_b": "400001"}` |
+| `POST` | `/api/v1/optimize` | Calculates optimized route distance for a list of Pincodes (Traveling Salesperson heuristic). | `200 OK` | `{"pincodes": ["110001", "560001", "400001"]}` |
 
-## Usage
+## 5. Development Scripts
 
-This service exposes RESTful endpoints for distance calculations. An example using `curl`:
+These scripts are defined in `pyproject.toml` and executed via `uv run <command>`:
 
-**Calculate distance using Haversine:**
+| Command | Description | Tooling Used |
+| :--- | :--- | :--- |
+| `dev` | Starts the local API server with hot reloading. | Uvicorn, FastAPI |
+| `test` | Executes all unit and integration tests. | Pytest, Coverage |
+| `lint` | Lints and formats all source code. | Ruff (Check/Format) |
+| `coverage` | Generates HTML coverage report after tests run. | Coverage.py |
 
-bash
-curl -X POST "http://127.0.0.1:5000/distance/haversine" \
-     -H "Content-Type: application/json" \
-     -d '{
-       "point1": {"lat": 40.7128, "lon": -74.0060},
-       "point2": {"lat": 34.0522, "lon": -118.2437}
-     }'
+---
 
-
-**Calculate distance using Vincenty:**
-
-bash
-curl -X POST "http://127.0.0.1:5000/distance/vincenty" \
-     -H "Content-Type: application/json" \
-     -d '{
-       "point1": {"lat": 40.7128, "lon": -74.0060},
-       "point2": {"lat": 34.0522, "lon": -118.2437}
-     }'
-
-
-## Development
-
-### Linting and Formatting
-
-This project uses **Ruff** for extremely fast linting and formatting. To check and apply formatting:
-
-bash
-ruff check .
-ruff format .
-
-
-### Testing
-
-Tests are written using **Pytest**. To run the test suite:
-
-bash
-pytest
-
-
-## Contributing
-
-We welcome contributions! Please refer to the [CONTRIBUTING.md](.github/CONTRIBUTING.md) file for detailed guidelines on how to submit your contributions.
-
-## License
-
-This project is licensed under the **Creative Commons Attribution-NonCommercial 4.0 International (CC BY-NC 4.0)** license. See the [LICENSE](LICENSE) file for more details.
-
-## AI Agent Directives
+## 6. 🤖 AI Agent Directives (Operational Mandate)
 
 <details>
-<summary>Expand for AI Agent Directives</summary>
+<summary><strong>📐 SYSTEM SPECIFICATIONS & ARCHITECTURAL STANDARDS (DECEMBER 2025)</strong></summary>
 
-This document outlines the directives for AI agents interacting with the `GeoDistance-Utility-API-Service` repository.
+### 6.1. IDENTITY & PRIME DIRECTIVE
 
-### 1. Identity & Prime Directive
+*   **Role:** Senior Principal Software Architect operating under the guidance of the **Apex Technical Authority**.
+*   **Objective:** Ensure all code merges adhere to FAANG-level security, performance, and architectural best practices.
+*   **Tone:** Highly disciplined, formal, and structured.
 
-*   **Role:** Senior Principal Software Architect, Master Technical Copywriter.
-*   **Experience:** 40+ years of elite industry expertise.
-*   **Standards:** FAANG-level quality, "Managing the Unmanageable" philosophy.
-*   **Output:** **EXECUTION-ONLY**. No plans, only code, docs, and fixes.
-*   **Philosophy:** "Zero-Defect, High-Velocity, Future-Proof."
+### 6.2. CONTEXT-AWARE APEX TECH STACKS
 
-### 2. Input Processing & Cognition
+This project is a high-velocity Python service adhering to the **DATA / SCRIPTS / API** standards.
 
-*   **Speech-to-Text Interpretation:** Infer technical intent; **STRICTLY FORBIDDEN** from executing literal typos. Use `README.md` as the Single Source of Truth (SSOT).
-*   **Mandatory MCP Instrumentation:** No hallucinated APIs. Use `linkup`/`brave` for research (Dec 2025 standards, security threats, 2026 trends). Use `docfork` to verify external API signatures. Use `clear-thought-two` for complex flow architecture before coding.
+| Component | Tool / Standard | Requirement |
+| :--- | :--- | :--- |
+| **Runtime** | Python 3.11+ | Strict type hinting and Pydantic v2 validation. |
+| **Package Mgr** | `uv` | Must be used for all dependency resolution, environment setup, and script execution. |
+| **API Framework** | FastAPI | Asynchronous endpoints, full use of Pydantic models for request/response bodies. |
+| **Testing** | Pytest | 100% test coverage for Domain Core logic (Hexagonal inner layer). |
+| **Lint/Format** | Ruff | Enforced zero-warnings policy. Configuration via `pyproject.toml`. |
 
-### 3. Context-Aware Apex Tech Stacks (Late 2025 Standards)
+### 6.3. ARCHITECTURAL MANDATES (HEXAGONAL)
 
-*   **Primary Scenario: DATA / SCRIPTS / AI (Python)**
-    *   **Stack:** Python 3.10+.
-    *   **Tools:** **uv** (package/dependency management), **Ruff** (linting/formatting), **Pytest** (testing).
-    *   **Architecture:** Modular Monolith. Ensures clear separation of concerns while maintaining unified deployment.
-    *   **AI Integration:** N/A for this specific service (focus is on calculation, not AI-driven data generation or analysis).
-    *   **API Framework:** Flask (as implied by existing topics, though not explicitly stated in `base_agents_md_content` for this repo, it's a common Python microservice choice).
+1.  **Domain Core Integrity:** The `domain` directory (Entities, Value Objects, Logic) must have **zero external dependencies** outside of standard Python libraries and Pydantic.
+2.  **Ports:** All interactions between the Application Layer and external systems (Databases, Caching, External APIs) must be mediated by defined interfaces (`.py` abstract classes or Protocols).
+3.  **Adapters:** Infrastructure details (FastAPI controllers, Uvicorn settings, actual database clients) reside solely within the `infrastructure` layer.
+4.  **Dependency Rule:** Dependencies must flow *inward*. Infrastructure depends on Application; Application depends on Domain.
 
-### 4. Apex Naming Convention (Star Velocity Engine)
+### 6.4. CODE PRINCIPLES & SECURITY
 
-*   **Formula:** `<Product-Name>-<Primary-Function>-<Platform>-<Type>`
-*   **Format:** `Title-Case-With-Hyphens`.
-*   **Rules:** 3-10 words, high-volume keywords, no numbers/emojis/underscores/generic qualifiers without context.
+*   **SOLID & DRY:** Strict adherence required. Business logic must not be duplicated in controllers.
+*   **Data Validation:** All input must be validated using Pydantic models (Input Ports).
+*   **Error Handling:** Custom exceptions must be defined in the Domain Core and handled gracefully by Middleware/Exception Handlers in the Adapter layer.
 
-### 5. README Replication Protocol (The Ultimate Artifact)
+### 6.5. VERIFICATION COMMANDS
 
-*   **Sections:** Visual Authority (Hero Banner, Live Badges), Structural Clarity (BLUF, Architecture, TOC), AI Agent Directives (`<details>` block), Development Standards (Setup, Scripts, Principles).
-*   **Badges:** `flat-square` style, `chirag127` username, include Build Status, Code Coverage, Tech Stack, Lint/Format, License, GitHub Stars.
+The following commands must pass zero-error status before any merge:
 
-### 6. Chain of Thought (CoT) Protocol
+bash
+# 1. Dependency Check (Clean environment sync)
+uv sync --frozen
 
-*   **Process:** Audit -> Pivot/Archive Decision -> Naming Strategy -> Replication Protocol -> File Generation -> Final Polish -> Strict Adherence.
+# 2. Linting and Formatting Check (Zero Errors/Warnings)
+uv run lint
 
-### 7. Dynamic URL & Badge Protocol
+# 3. Unit and Integration Tests (Minimum 95% coverage required)
+uv run test
 
-*   **Base URL:** `https://github.com/chirag127/<New-Repo-Name>`.
-*   **Consistency:** All links and badges MUST use the new repository name.
-*   **AGENTS.md Customization:** Adapt AI Agent Directives to the repository's specific tech stack (Python, Flask, Ruff, Pytest).
-
-### 8. Repository Specific Directives
-
-*   **Project Name:** `GeoDistance-Utility-API-Service`.
-*   **Language:** Python.
-*   **Framework:** Flask.
-*   **Core Task:** Geospatial distance calculation (Haversine, Vincenty).
-*   **Testing:** Utilize Pytest for comprehensive test coverage.
-*   **Linting/Formatting:** Employ Ruff for efficient code quality checks.
-*   **Dependency Management:** Use uv for robust environment and package management.
+# 4. Local API Startup Check
+uv run dev
 
 </details>
+
+## 7. License & Contribution
+
+This repository is released under the **CC BY-NC 4.0** License. Contributions are welcome; please see our [CONTRIBUTING.md](.github/CONTRIBUTING.md) for detailed guidelines and architectural mandates.
